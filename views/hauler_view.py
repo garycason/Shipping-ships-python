@@ -1,3 +1,4 @@
+#hauler_view.py
 import sqlite3
 import json
 
@@ -83,3 +84,25 @@ def retrieve_hauler(pk):
         serialized_hauler = json.dumps(dict(query_results))
 
     return serialized_hauler
+#defines our create function takes a parameter which will be a dictionary containing
+#our hauler's information
+def create_hauler(hauler_data):
+    #connects to SQLite database
+    with sqlite3.connect("shipping.db") as conn:
+        #this allows us to execute SQL statements in python
+        db_cursor = conn.cursor()
+
+
+
+        #executes INSERT SQL statement
+        db_cursor.execute(
+            """
+            INSERT INTO Hauler (name,dock_id)
+            VALUES(?,?)
+            """,
+            (hauler_data['name'],hauler_data['dock_id'])
+        )
+
+        id=db_cursor.lastrowid
+
+        return json.dumps({"id":id})

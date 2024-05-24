@@ -1,3 +1,4 @@
+#dock_view.py
 import sqlite3
 import json
 
@@ -80,3 +81,31 @@ def retrieve_dock(pk):
         serialized_dock = json.dumps(dict(query_results))
 
     return serialized_dock
+
+# Defines create_dock which is a function that takes dock_data
+# dock_data is a dictionary containing dock's information
+def create_dock(dock_data):
+    
+    # Opens a connection to the shipping.db SQLite database
+    with sqlite3.connect("./shipping.db") as conn:
+
+        # Allows us to execute SQL statements
+        db_cursor = conn.cursor()
+
+        # Executes an INSERT INTO SQL statement to insert a new record
+        # into the Dock table
+        # The ? are placeholders that will be replaced with values from 
+        # dock_data
+        db_cursor.execute(
+             """
+            INSERT INTO Dock (location, capacity)
+            VALUES (?, ?)
+             """,
+             (dock_data['location'], dock_data['capacity'])
+        )
+        
+        # Retrieves the ID of the last row that was inserted into the table
+        id = db_cursor.lastrowid
+
+        # Returns the ID of the newly created dock as a JSON object
+        return json.dumps({"id": id})
